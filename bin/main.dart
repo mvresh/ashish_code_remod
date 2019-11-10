@@ -41,13 +41,13 @@ checkList(List<List<int>> board, int i) {
   }
 }
 
-bool notInRow(List<List<int>> board, int row) {
+bool checkRow(List<List<int>> board, int row) {
   return checkList(board, row);
   }
 
-bool notInCol(List<List<int>> board, int col) {
+bool checkCol(List<List<int>> board, int col) {
   List transposed = transposeMatrix(board);
-  return checkList(board, col);
+  return checkList(transposed, col);
 }
 
 bool notInBox(List<List<int>> board, int row, int col) {
@@ -71,8 +71,8 @@ bool notInBox(List<List<int>> board, int row, int col) {
 }
 
 bool isValid(List<List<int>> board, int row, int col) {
-  return notInRow(board, row) &&
-      notInCol(board, col);
+  return checkRow(board, row) &&
+      checkCol(board, col);
 }
 
 bool sudokuValidator(List<List<int>> board) {
