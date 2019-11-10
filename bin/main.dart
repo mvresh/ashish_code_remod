@@ -20,73 +20,59 @@
 //  [ 6, 2, 5, 9, 4, 8, 1, 3, 7 ],
 //  [ 8, 7, 3, 5, 1, 2, 9, 6, 4 ]
 //  ]) ➞ true
-transposeMatrix(List<List> matrix) {
-  List<List> transpose = List<List>();
-  for (int i = 0; i < matrix[0].length; i++) {
-    List newList = List();
-    matrix.forEach((list) => {newList.add(list[i])});
-    transpose.add(newList);
-  }
-  return transpose;
-}
-
-checkList(List<List<int>> board, int i) {
-  if (board[i]
-      .toSet()
-      .length != 9) {
-    return false;
-  }
-  else {
-    return true;
-  }
-}
-
-bool checkRow(List<List<int>> board, int row) {
-  return checkList(board, row);
-  }
-
-bool checkCol(List<List<int>> board, int col) {
-  List transposed = transposeMatrix(board);
-  return checkList(transposed, col);
-}
-
-bool notInBox(List<List<int>> board, int row, int col) {
-// Set to store characters seen so far.
-  List<int> st = [];
-  if (row % 3 - 1 == 0 && col % -1 == 0) {
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        int curr = board[i + row][j + col];
-        if (st.contains(curr)) {
-          return false;
-        } else {
-          st.add(curr);
-          print(st);
-        }
-
-      }
-    }
-  }
-  return true;
-}
-
-bool isValid(List<List<int>> board, int row, int col) {
-  return checkRow(board, row) &&
-      checkCol(board, col);
-}
-
-bool sudokuValidator(List<List<int>> board) {
-  int n = 9;
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      if (!isValid(board, i, j) && notInBox(board, i, j)) {
+sudokuValidator(List<List> board) {
+  valid(List list) {
+    for(int i = 0; i < list.length; i++){
+      if(list[i] > 9 || list[i] < 0){
         return false;
       }
     }
+    return list.toSet().length == 9;
   }
-  return true;
-}
 
+  bool checkRowsAndCols(List<List> board) {
+    List colList = [];
+    for (int i = 0; i < 9; i++) {
+      if(valid(board[i])) {
+        for (int j = 0; j < 9; j++) {
+          colList.add(board[j][i]);
+        }
+        if(valid(colList)){
+          colList.clear();
+        }
+        else{
+          return false;
+        };
+      }
+      else{
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool checkBlock(List<List> board) {
+    List block = List();
+    for (int i = 0; i < 9; i += 3) {
+      for (int j = 0; j < 9; j += 3) {
+        for (int a = i; a < i + 3; a++) {
+          for (int b = j; b < j + 3; b++) {
+            block.add(board[a][b]);
+          }
+        }
+        if(valid(block)){
+          block.clear();
+        }
+        else{
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  return checkRowsAndCols(board) && checkBlock(board);
+}
 // Challenge 3
 // Sort by Factor Length
 // A numbers factor length is simply its total number of factors.
