@@ -20,58 +20,67 @@
 //  [ 6, 2, 5, 9, 4, 8, 1, 3, 7 ],
 //  [ 8, 7, 3, 5, 1, 2, 9, 6, 4 ]
 //  ]) ➞ true
-sudokuValidator(List<List> board) {
-  valid(List list) {
-    for(int i = 0; i < list.length; i++){
-      if(list[i] > 9 || list[i] < 0){
-        return false;
-      }
+
+bool checkRowAndColumn(List<List> board) {
+
+  for (int row = 0; row < 9; row++) {
+    if (board[row].toSet().length != 9) {
+      return false;
     }
-    return list.toSet().length == 9;
   }
 
-  bool checkRowsAndCols(List<List> board) {
+  for (int col = 0; col < 9; col++) {
     List colList = [];
-    for (int i = 0; i < 9; i++) {
-      if(valid(board[i])) {
-        for (int j = 0; j < 9; j++) {
-          colList.add(board[j][i]);
-        }
-        if(valid(colList)){
-          colList.clear();
-        }
-        else{
-          return false;
-        };
-      }
-      else{
+    for (int row = 0; row < 9; row++) {
+      colList.add(board[row][col]);
+    }
+    if (colList.toSet().length != 9) {
+      return false;
+    }
+  }
+  return true;
+}
+bool areValidNumbers(List<List> board) {
+  for (int row = 0; row < 9; row++) {
+    for (int col = 0; col < 9; col++) {
+      if (board[row][col] == null ||
+          board[row][col] < 0 ||
+          board[row][col] == 0||
+          board[row][col] > 9) {
         return false;
       }
     }
-    return true;
   }
+  return true;
+}
 
-  bool checkBlock(List<List> board) {
-    List block = List();
-    for (int i = 0; i < 9; i += 3) {
-      for (int j = 0; j < 9; j += 3) {
-        for (int a = i; a < i + 3; a++) {
-          for (int b = j; b < j + 3; b++) {
-            block.add(board[a][b]);
-          }
-        }
-        if(valid(block)){
-          block.clear();
-        }
-        else{
-          return false;
-        }
+bool checkBoxes(List<List> board) {
+  for (int row = 0; row < board.length; row = row + 3) {
+    for (int col = 0; col < board.length; col = col + 3) {
+      if (!checkBox(board, row, col)) {
+        return false;
       }
     }
-    return true;
   }
+  return true;
+}
 
-  return checkRowsAndCols(board) && checkBlock(board);
+bool checkBox(List<List> board, int rowNum, int colNum) {
+  List elements = [];
+  for (int row = rowNum; row < rowNum + 3; row++) {
+    for (int col = colNum; col < colNum + 3; col++) {
+      elements.add(board[row][col]);
+    }
+  }
+  if (elements.toSet().length != board.length) {
+    return false;
+  }
+  return true;
+}
+
+
+sudokuValidator(List<List> board) {
+  return areValidNumbers(board) && checkRowAndColumn(board) && checkBoxes(board);
 }
 // Challenge 3
 // Sort by Factor Length
